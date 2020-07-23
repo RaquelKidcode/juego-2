@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const Coin = SpriteKind.create()
+    export const Flower = SpriteKind.create()
 }
 namespace myTiles {
     //% blockIdentity=images._tile
@@ -154,7 +155,29 @@ namespace myTiles {
 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
 `
+    //% blockIdentity=images._tile
+    export const tile8 = img`
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+`
 }
+scene.onOverlapTile(SpriteKind.Player, myTiles.tile1, function (sprite, location) {
+    game.over(false, effects.melt)
+})
 // 2º paso: Cambiamos la imagen al girar hacia la
 // izquierda o derecha
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -178,7 +201,7 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 `)
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestOpen, function (sprite, location) {
-    game.over(true)
+    game.over(true, effects.confetti)
 })
 // Para saltar hacemos esto:
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -206,9 +229,59 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . . . . f f b b f f . . . . 
 `)
 })
-scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleRedCrystal, function (sprite, location) {
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Player, function (sprite, otherSprite) {
     info.changeScoreBy(1)
+    otherSprite.destroy()
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Flower, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    bee = sprites.create(img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . f f f f f f f f f . . . 
+. . . f 1 1 1 1 f 1 1 1 1 f . . 
+. . . f 1 1 1 1 1 1 1 1 1 f . . 
+. . . . . 1 1 1 f 1 1 1 . . . . 
+. . . f f f 5 f f f f f f f . . 
+. . f 5 5 5 5 5 f 5 5 5 5 5 f . 
+. . f f 5 5 5 5 f 5 5 5 5 f f . 
+. . f 5 5 5 5 5 f 5 5 5 5 5 f . 
+. . . f f f f f f f f f f f . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`, SpriteKind.Enemy)
+    animation.runImageAnimation(
+    bee,
+    [img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`],
+    100,
+    true
+    )
+    bee.setPosition(Heroina.x + 80, Heroina.y + 80)
+    bee.follow(Heroina)
+})
+let bee: Sprite = null
+let flor: Sprite = null
+let Moneda: Sprite = null
 let Heroina: Sprite = null
 scene.setBackgroundImage(img`
 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
@@ -352,7 +425,7 @@ Heroina = sprites.create(img`
 `, SpriteKind.Player)
 controller.moveSprite(Heroina, 100, 0)
 tiles.setTilemap(tiles.createTilemap(
-            hex`3200100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f0f0f000000000000000000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000090000000000000000000f0000090900000000000000000000000000000000000000000000000000000000000909090900000000000000000000000000000000000009090000000000000000000000000f0000090909000000090900000000000000000000000000000000000009090000000000000000000000000f00000000000009090000000000000000000000000000000000000000000f00000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d02020202060602020202020606020206060202020202020206060202020606020202020202060606020202060602020202020202020204040202020202040402020404020202020202020404020202040402020202020204040402020204040202020202`,
+            hex`3200100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0c0c000000100000000000000000000000001000000000000000000000000000000000000000000c000000000000000000000000000000090000000000000000000c0000090900000000000000000000000000000000000000000000000010000000000909090900000000000000000000001000000000000009090000000000000000000000000c0000090909000000090900000000000000000000000000000000000009090000000000000000000000000c00000000000009090000000000000000000000000000000000000000000c00000000000000000000000000000000000000000c00000000000000000000000000000000000000000010000000000000000000000000000000000000000010000000001000000d02020202060602020202020606020206060202020202020206060202020606020202020202060606020202060602020202020202020204040202020202040402020404020202020202020404020202040402020202020204040402020204040202020202`,
             img`
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -371,12 +444,108 @@ tiles.setTilemap(tiles.createTilemap(
 2 2 2 2 . . 2 2 2 2 2 . . 2 2 . . 2 2 2 2 2 2 2 . . 2 2 2 . . 2 2 2 2 2 2 . . . 2 2 2 . . 2 2 2 2 2 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 `,
-            [myTiles.tile0,sprites.builtin.brick,sprites.dungeon.floorLightMoss,sprites.dungeon.greenOuterNorth1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,sprites.dungeon.darkGroundSouthEast0,sprites.dungeon.floorDark5,myTiles.tile5,myTiles.tile6,myTiles.tile7,sprites.dungeon.chestOpen,sprites.dungeon.collectibleBlueCrystal,sprites.dungeon.collectibleRedCrystal],
+            [myTiles.tile0,sprites.builtin.brick,sprites.dungeon.floorLightMoss,sprites.dungeon.greenOuterNorth1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,sprites.dungeon.darkGroundSouthEast0,sprites.dungeon.floorDark5,myTiles.tile5,myTiles.tile6,myTiles.tile7,sprites.dungeon.chestOpen,sprites.dungeon.collectibleBlueCrystal,sprites.dungeon.collectibleRedCrystal,myTiles.tile8],
             TileScale.Sixteen
         ))
 scene.cameraFollowSprite(Heroina)
 Heroina.ay = 300
 info.setLife(3)
+for (let value of tiles.getTilesByType(myTiles.tile7)) {
+    Moneda = sprites.create(img`
+. . b b b b . . 
+. b 5 5 5 5 b . 
+b 5 d 3 3 d 5 b 
+b 5 3 5 5 1 5 b 
+c 5 3 5 5 1 d c 
+c d d 1 1 d d c 
+. f d d d d f . 
+. . f f f f . . 
+`, SpriteKind.Player)
+    animation.runImageAnimation(
+    Moneda,
+    [img`
+. . b b b b . . 
+. b 5 5 5 5 b . 
+b 5 d 3 3 d 5 b 
+b 5 3 3 5 1 5 b 
+c 5 3 5 5 1 d c 
+c d d 1 1 d d c 
+. f d d d d f . 
+. . f f f f . . 
+`,img`
+. . b b b . . . 
+. b 5 5 5 b . . 
+b 5 d 3 d 5 b . 
+b 5 3 5 1 5 b . 
+c 5 3 5 1 d c . 
+c 5 d 1 d d c . 
+. f d d d f . . 
+. . f f f . . . 
+`,img`
+. . . b b . . . 
+. . b 5 5 b . . 
+. b 5 d 1 5 b . 
+. b 5 3 1 5 b . 
+. c 5 3 1 d c . 
+. c 5 1 d d c . 
+. . f d d f . . 
+. . . f f . . . 
+`,img`
+. . . b b . . . 
+. . b 5 5 b . . 
+. . b 1 1 b . . 
+. . b 5 5 b . . 
+. . b d d b . . 
+. . c d d c . . 
+. . c 3 3 c . . 
+. . . f f . . . 
+`,img`
+. . . b b . . . 
+. . b 5 5 b . . 
+. b 5 1 d 5 b . 
+. b 5 1 3 5 b . 
+. c d 1 3 5 c . 
+. c d d 1 5 c . 
+. . f d d f . . 
+. . . f f . . . 
+`,img`
+. . . b b b . . 
+. . b 5 5 5 b . 
+. b 5 d 3 d 5 b 
+. b 5 1 5 3 5 b 
+. c d 1 5 3 5 c 
+. c d d 1 d 5 c 
+. . f d d d f . 
+. . . f f f . . 
+`],
+    100,
+    true
+    )
+    tiles.placeOnTile(Moneda, value)
+    tiles.setTileAt(value, myTiles.tile0)
+}
+for (let value of tiles.getTilesByType(myTiles.tile8)) {
+    flor = sprites.create(img`
+. . . . . . . . 
+. . . . . . . . 
+. . . . . . . . 
+. . . . . . . . 
+. b b d d b b . 
+b 1 1 3 3 1 1 b 
+b 1 3 5 5 3 1 b 
+b d 3 5 5 3 d b 
+c 1 1 d d 1 1 c 
+c d 1 d d 1 d c 
+. c c 7 6 c c . 
+. . 6 7 6 . . . 
+. . 6 6 8 8 8 6 
+. . 6 8 7 7 7 6 
+. . 8 7 7 7 6 . 
+. . 8 8 8 6 . . 
+`, SpriteKind.Flower)
+    tiles.placeOnTile(flor, value)
+    tiles.setTileAt(value, myTiles.tile0)
+}
 // Perder vidas y reiniciar juego
 game.onUpdate(function () {
     if (Heroina.tileKindAt(TileDirection.Bottom, myTiles.tile1)) {

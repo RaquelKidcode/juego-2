@@ -1,7 +1,8 @@
 {
     "name": "Juego 2",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "animation": "*"
     },
     "description": "",
     "files": [
